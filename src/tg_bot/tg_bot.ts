@@ -22,4 +22,8 @@ export class TgBot implements OnModuleInit, OnModuleDestroy {
     this.bot.command('start', (ctx) => ctx.reply('Welcome! Up and running.'));
     await this.bot.start();
   }
+
+  /**
+   * TODO:
+   */
 }
