@@ -5,6 +5,7 @@ import { UsersModule } from './users/users.module';
 import { TgBotModule } from './tg_bot/tg_bot.module';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { User } from './users/entities/user.entity';
 @Module({
   imports: [
     TypeOrmModule.forRoot({
@@ -13,7 +14,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
       port: 5432,
       password: 'app_password',
       username: 'app_user',
-      entities: [],
+      entities: [User],
       database: 'app_db',
       synchronize: true,
       logging: true,
