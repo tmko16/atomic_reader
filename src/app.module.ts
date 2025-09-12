@@ -1,11 +1,15 @@
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { UsersModule } from './users/users.module';
-import { TgBotModule } from './tg_bot/tg_bot.module';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { User } from './users/entities/user.entity';
+import { BotModule } from './bot/bot.module';
+import { User } from './user/entities/user.entity';
+import { Content } from './content/entities/content.entities';
+import { ScheduleModule } from '@nestjs/schedule';
+import { UserModule } from './user/user.module';
+import { ContentModule } from './content/content.module';
+import { TasksModule } from './tasks/tasks.module';
 @Module({
   imports: [
     TypeOrmModule.forRoot({
@@ -14,15 +18,17 @@ import { User } from './users/entities/user.entity';
       port: 5432,
       password: 'app_password',
       username: 'app_user',
-      entities: [User],
+      entities: [User, Content],
       database: 'app_db',
       synchronize: true,
       logging: true,
     }),
-
-    UsersModule,
-    TgBotModule,
+    ScheduleModule.forRoot(),
     ConfigModule.forRoot({ isGlobal: true }),
+    UserModule,
+    ContentModule,
+    BotModule,
+    TasksModule,
   ],
   controllers: [AppController],
   providers: [AppService],
