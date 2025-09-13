@@ -21,10 +21,22 @@ export class ContentService {
   async getNextChunk(user: User) {
     if (!user.content) return null;
     const t = user.content;
-    const chunk = t.content.substring(t.nextOffset, 200);
-    if (!chunk) return null;
-    t.nextOffset += 200;
+
+    // Проверяем, не достигли ли мы конца файла
+    if (t.nextOffset >= t.content.length) return null;
+
+    // Получаем следующий чанк правильного размера
+    const chunkSize = 200;
+    const endOffset = Math.min(t.nextOffset + chunkSize, t.content.length);
+    const chunk = t.content.substring(t.nextOffset, endOffset);
+
+    // Обновляем offset
+    t.nextOffset = endOffset;
     await this.repo.save(t);
+
     return chunk;
   }
 }
+// ... existing code ...
+
+// ... existing code ...

@@ -1,14 +1,14 @@
-/* eslint-disable @typescript-eslint/no-unsafe-call */
-
 import { Injectable, OnModuleInit } from '@nestjs/common';
-import { Bot } from 'grammy';
+import { Bot, Context } from 'grammy';
 import { ContentService } from 'src/content/content.service';
+import { FileFlavor, hydrateFiles } from '@grammyjs/files';
 import { UserService } from 'src/user/user.service';
 import fs from 'fs-extra';
+type MyContext = FileFlavor<Context>;
 
 @Injectable()
 export class BotService implements OnModuleInit {
-  public bot: Bot;
+  public bot: Bot<MyContext>;
 
   constructor(
     private userService: UserService,
@@ -16,7 +16,10 @@ export class BotService implements OnModuleInit {
   ) {}
 
   onModuleInit() {
-    this.bot = new Bot(process.env.TG_TOKEN!);
+    const bot = new Bot<MyContext>(process.env.TG_TOKEN!);
+    bot.api.config.use(hydrateFiles(bot.token));
+
+    this.bot = bot;
     this.bot.command('start', async (ctx) => {
       const tg = ctx.from!;
       let user = await this.userService.findByTelegramId(tg.id);
@@ -36,10 +39,11 @@ export class BotService implements OnModuleInit {
       if (!doc.mime_type?.includes('text'))
         return ctx.reply('Только текстовый файл.');
 
-      const file = await ctx.api.getFile(doc.file_id);
-      const localPath = `./uploads/${doc.file_unique_id}.txt`;
+      const file = await ctx.getFile();
+      const localPath = `./uploads/${file.file_id}.txt`;
       await fs.ensureDir('./uploads');
-      await ctx.api.downloadFile(file.file_path, localPath);
+      // await downloadFile(file.file_path, localPath);
+      await file.download(localPath);
       const content = await fs.readFile(localPath, 'utf-8');
 
       let user = await this.userService.findByTelegramId(ctx.from.id);

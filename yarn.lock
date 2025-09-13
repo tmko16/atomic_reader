@@ -410,6 +410,11 @@
     "@eslint/core" "^0.15.2"
     levn "^0.4.1"
 
+"@grammyjs/files@^1.1.1":
+  version "1.1.1"
+  resolved "https://registry.yarnpkg.com/@grammyjs/files/-/files-1.1.1.tgz#f030f6d6b4da945aa4c1a8ff469585492ba6bcbc"
+  integrity sha512-T3vJCVlj76I8d4BUI0MPDyIkfWOkG4NXyy8HDKAmG5tIb1SxMtrQHcwRYCOHeSJ1EvLWtfadFNTbRXuym+8c6Q==
+
 "@grammyjs/types@3.22.1":
   version "3.22.1"
   resolved "https://registry.yarnpkg.com/@grammyjs/types/-/types-3.22.1.tgz#7c6f2b541f10af06a19cea6d35d0bbf18ea44d20"

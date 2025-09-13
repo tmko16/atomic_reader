@@ -19,6 +19,6 @@ export class Content {
   nextOffset: number;
 
   @OneToOne(() => Content, (content) => content.user)
-  @JoinColumn()
+  @JoinColumn({ name: 'id' })
   user: User;
 }
