@@ -23,9 +23,12 @@ export class UserService {
   }
   // user.service.ts
   async findReadyForTime(sendAt: string) {
-    return this.repo.find({
-      where: { sendAt },
+    const result = await this.repo.find({
+      where: { sendAt: `${sendAt}:00` },
       relations: { content: true },
     });
+
+    console.log({ result });
+    return result;
   }
 }
