@@ -13,11 +13,10 @@ export class TasksService {
     @Inject(BOT_INSTANCE) private bot: Bot, // строго типизировано
   ) {}
 
-  @Cron('* * * * * *')
+  @Cron('0 * * * * *')
   private async tick() {
     const time = new Date().toTimeString().slice(0, 5);
     const users = await this.userService.findReadyForTime(time);
-    console.log('=>>>> users ', users);
     for (const u of users) {
       const chunk = await this.contentService.getNextChunk(u);
       if (chunk) await this.bot.api.sendMessage(u.telegramId, chunk);
