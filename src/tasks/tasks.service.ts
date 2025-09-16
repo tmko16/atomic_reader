@@ -13,6 +13,10 @@ export class TasksService {
     @Inject(BOT_INSTANCE) private bot: Bot, // строго типизировано
   ) {}
 
+  /**
+   * Каждую минуту делаем запрос на получение пользователей у которых
+   * выбрано нужное время отправки сообщения
+   */
   @Cron('0 * * * * *')
   private async tick() {
     const time = new Date().toTimeString().slice(0, 5);
