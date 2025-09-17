@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { BotModule } from './bot/bot.module';
 import { User } from './user/entities/user.entity';
@@ -10,21 +10,27 @@ import { ScheduleModule } from '@nestjs/schedule';
 import { UserModule } from './user/user.module';
 import { ContentModule } from './content/content.module';
 import { TasksModule } from './tasks/tasks.module';
+
 @Module({
   imports: [
-    TypeOrmModule.forRoot({
-      type: 'postgres',
-      host: 'localhost',
-      port: 5432,
-      password: 'app_password',
-      username: 'app_user',
-      entities: [User, Content],
-      database: 'app_db',
-      synchronize: true,
-      logging: true,
+    ConfigModule.forRoot({ isGlobal: true }),
+    TypeOrmModule.forRootAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: (config: ConfigService) => ({
+        type: 'postgres',
+        host: config.get<string>('DATABASE_HOST', 'localhost'),
+        port: parseInt(config.get<string>('DATABASE_PORT', '5432'), 10),
+        username: config.get<string>('DATABASE_USER'),
+        password: config.get<string>('DATABASE_PASSWORD'),
+        database: config.get<string>('DATABASE_NAME'),
+        entities: [User, Content],
+        synchronize:
+          config.get<string>('DATABASE_SYNCHRONIZE', 'true') === 'true',
+        logging: config.get<string>('DATABASE_LOGGING', 'true') === 'true',
+      }),
     }),
     ScheduleModule.forRoot(),
-    ConfigModule.forRoot({ isGlobal: true }),
     UserModule,
     ContentModule,
     BotModule,

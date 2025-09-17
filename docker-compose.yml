@@ -5,15 +5,15 @@ services:
     image: postgres:latest
     container_name: atomic_reader
     environment:
-      POSTGRES_DB: app_db
-      POSTGRES_USER: app_user
-      POSTGRES_PASSWORD: app_password
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     ports:
       - "5432:5432"
     volumes:
       - pg-data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U app_user -d app_db"]
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
       interval: 5s
       timeout: 3s
       retries: 10
@@ -30,6 +30,18 @@ services:
       - postgres
     volumes:
       - pgadmin-data:/var/lib/pgadmin
+
+  api:
+    build: .
+    container_name: atomic-reader-api
+    env_file:
+      - .env.production
+    environment:
+      - NODE_ENV=production 
+    depends_on:
+      - postgres
+    ports:
+      - "3000:3000"
 
 volumes:
   pg-data:
