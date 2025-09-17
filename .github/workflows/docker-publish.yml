@@ -1,4 +1,4 @@
-name: Publish Docker image to GHCR_1
+name: Publish Docker image to GHCR_2
 
 on:
   push:
